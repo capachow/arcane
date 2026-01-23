@@ -1,0 +1,32 @@
+{
+    "name": "capachow/arcane",
+    "type": "project",
+    "description": "A deceptively powerful 12kb dependency-free single-file PHP microframework built to keep things easy and minimal.",
+    "keywords": [
+        "php",
+        "web-development",
+        "micro-framework",
+        "php-framework",
+        "zero-dependency",
+        "microframework",
+        "php-micro-framework",
+        "arcane"
+    ],
+    "homepage": "https://arcane.dev",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Joshua Britt",
+            "email": "joshua@britt.email",
+            "homepage": "https://capachow.com",
+            "role": "Wizard"
+        }
+    ],
+    "require": {
+        "php": ">=8.2"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    }
+}
