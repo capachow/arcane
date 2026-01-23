@@ -25,6 +25,8 @@ At its core, Arcane is a tiny `12kb` single-file PHP microframework designed to 
 curl -fsLO copy.arcane.dev/index.php
 ```
 
+> <code><del>composer create-project capachow/arcane</del></code> It's a single file with zero dependencies. You really should just curl it.
+
 Simply drop `index.php` into your project root and open it in your browser. Arcane will conjure everything you need like magic.
 
 ## Documentation
