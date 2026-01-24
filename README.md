@@ -25,9 +25,9 @@ At its core, Arcane is a tiny `12kb` single-file PHP microframework designed to 
 curl -fsLO copy.arcane.dev/index.php
 ```
 
-> <code><del>composer create-project capachow/arcane</del></code> It's a single file with zero dependencies. You really should just curl it.
+> <code><del>composer create-project capachow/arcane</del></code> It's a single file with zero dependencies. You should just curl it.
 
-Simply drop `index.php` into your project root and open it in your browser. Arcane will conjure everything you need like magic.
+Simply drop `index.php` into your project and open it in your browser. Arcane conjures the rest like magic.
 
 ## Documentation
 
@@ -60,10 +60,10 @@ Dependencies also break. They age, conflict, and require maintenance. Arcane sta
 
 Instead of a complex event loop, Arcane follows a linear path of discovery:
 
-1. **Match:** The URL is mapped directly to the closest physical file in `/pages`, normalizing paths for SEO automatically.
+1. **Match:** The URL is mapped directly to the closest physical file in `/pages`, normalizing paths for SEO.
 2. **Collect:** Arcane walks the directory tree down to that file, channels only relevant helpers, data, and assets.
 3. **Build:** The page executes within this prepared environment, generating the `CONTENT` constant.
-4. **Return:** The output is wrapped in the active layout, assets are injected, and the final response is sent to the browser.
+4. **Return:** Output is wrapped in the layout, assets are injected, and the final response is sent to the browser.
 
 ---
 
@@ -118,8 +118,8 @@ Arcane keeps things minimal. You can build simple to complex applications using 
 
 2.3 **`relay(string, mixed)`**: This is how you "yield" data from a page to the layout.
 
-  - **Usage**: A page can define a custom title or metadata using `relay('TITLE', 'My Page')`. The layout can then echo `TITLE`.
-  - **Advanced**: If you pass a function (callable), Arcane captures the output buffer and relays the resulting HTML.
+  - **Usage**: Pages pass data with `relay('TITLE', 'My Page')`. Layouts then echo `TITLE`.
+  - **Advanced**: If you pass a function (callable), Arcane captures the output and relays the resulting HTML.
 
 ``` php
 <?php relay('TITLE', 'Home'); ?>
