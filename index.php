@@ -240,7 +240,7 @@
     define('PATH', $path);
   })();
   
-  (function() use(&$define) {
+  (function() {
     $directory = trim(str_replace([APP['DIR'], '.php'], '', PAGEFILE), '/');
     
     do {
@@ -263,15 +263,15 @@
       }
     }
     
-    $define['BAG']['helpers'] = $helpers ?? [];
+    define('HELPERS', $helpers ?? []);
   })();
   
-  (function() use(&$define) {
+  (function() {
     $path = PATH;
     
     if(defined('PAGEFILE')) {
-      relay('CONTENT', function() use(&$define) {
-        extract($define['BAG']['helpers'], EXTR_SKIP);
+      relay('CONTENT', function() {
+        extract(HELPERS, EXTR_SKIP);
         
         require PAGEFILE;
       });
@@ -357,7 +357,7 @@
     }
   })();
   
-  (function() use(&$define) {
+  (function() {
     ob_start(function($content) {
       if(SET['MINIFY']) {
         $minify = [
@@ -375,7 +375,7 @@
       }
     });
       if(defined('LAYOUTFILE')) {
-        extract($define['BAG']['helpers'], EXTR_SKIP);
+        extract(HELPERS, EXTR_SKIP);
         
         require LAYOUTFILE;
       } else {
