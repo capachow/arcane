@@ -277,7 +277,15 @@
       });
     }
     
-    if(defined('ROUTES')) {
+    if(defined('REDIRECT')) {
+      if(!array_key_exists('host', parse_url(REDIRECT))) {
+        $redirect = path(REDIRECT);
+      }
+      
+      header('Location: ' . ($redirect ?? REDIRECT));
+      
+      exit;
+    } else if(defined('ROUTES')) {
       $facade = array_diff_assoc(URI, $path);
       
       foreach(ROUTES as $route) {
@@ -310,16 +318,6 @@
       
       exit;
     } else {
-      if(defined('REDIRECT')) {
-        if(!array_key_exists('host', parse_url(REDIRECT))) {
-          $redirect = path(REDIRECT);
-        }
-        
-        header('Location: ' . ($redirect ?? REDIRECT));
-        
-        exit;
-      }
-      
       if(defined('LAYOUT') || !empty(SET['LAYOUT'])) {
         $layout = defined('LAYOUT') ? LAYOUT : SET['LAYOUT'];
         $layout = path(DIR['LAYOUTS'] . "/{$layout}.php", true);
