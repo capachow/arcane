@@ -270,7 +270,7 @@
     $path = PATH;
     
     if(defined('PAGEFILE')) {
-      relay('CONTENT', function() {
+      relay('CONTENT', function() use(&$define) {
         extract($define['BAG']['helpers'], EXTR_SKIP);
         
         require PAGEFILE;
