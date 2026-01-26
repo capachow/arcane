@@ -25,7 +25,7 @@
     'MINIFY' => true
   ];
   
-  (function() use($define) {
+  (function() use(&$define) {
     $app = [
       'DIR' => dirname($_SERVER['SCRIPT_FILENAME']) . '/',
       'ROOT' => rtrim($_SERVER['DOCUMENT_ROOT'], '/') . '/',
@@ -239,7 +239,7 @@
     define('PATH', $path);
   })();
   
-  (function() {
+  (function() use(&$define) {
     $directory = trim(str_replace([APP['DIR'], '.php'], '', PAGEFILE), '/');
     
     do {
@@ -262,15 +262,15 @@
       }
     }
     
-    $GLOBALS['helpers'] = $helpers ?? [];
+    $define['BAG']['helpers'] = $helpers ?? [];
   })();
   
-  (function() {
+  (function() use(&$define) {
     $path = PATH;
     
     if(defined('PAGEFILE')) {
       relay('CONTENT', function() {
-        extract($GLOBALS['helpers'], EXTR_SKIP);
+        extract($define['BAG']['helpers'], EXTR_SKIP);
         
         require PAGEFILE;
       });
@@ -358,7 +358,7 @@
     }
   })();
   
-  (function() {
+  (function() use(&$define) {
     ob_start(function($content) {
       if(SET['MINIFY']) {
         $minify = [
@@ -376,7 +376,7 @@
       }
     });
       if(defined('LAYOUTFILE')) {
-        extract($GLOBALS['helpers'], EXTR_SKIP);
+        extract($define['BAG']['helpers'], EXTR_SKIP);
         
         require LAYOUTFILE;
       } else {
