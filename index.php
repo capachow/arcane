@@ -6,7 +6,7 @@
  * MIT License https://arcane.dev
 **/
 
-(function arcane() {
+(function() {
   $define['DIR'] = [
     'HELPERS' => '/helpers/',
     'IMAGES' => '/images/',
