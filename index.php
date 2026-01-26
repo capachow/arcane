@@ -359,17 +359,15 @@
   
   (function() {
     ob_start(function($content) {
-      if(SET['MINIFY']) {
-        $minify = [
+      if(SET['MINIFY']) {        
+        return preg_replace(array_keys($minify = [
           "/\>\h+$/m" => ">",
           "/\>[^\S ]+/m" => ">",
           "/^\h+\</m" => "<",
           "/[^\S ]+\</m" => "<",
           "/\>\s{2,}\</" => "><",
-          "/\<\!--.*?-->/" => ""
-        ];
-        
-        return preg_replace(array_keys($minify), $minify, $content);
+          "//s" => ""
+          ]), $minify, $content);
       } else {
         return $content;
       }
