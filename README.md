@@ -374,6 +374,7 @@ Arcane provides global constants to give you instant access to the application s
 10.1 **Content & Output**:
 
   - `CONTENT`: The rendered HTML of the page.
+  - `HELPERS`: The merged and injected helpers for pages and layouts.
   - `STYLES`: The injected `<link>` tags (layout must be active).
   - `SCRIPTS`: The injected `<script>` tags (layout must be active).
 
@@ -393,7 +394,7 @@ Arcane provides global constants to give you instant access to the application s
 
 10.4 **App Configuration**:
 
-  - `APP`: Derived runtime info containing `ROOT`, `URI`, and `QUERY`.
+  - `APP`: Derived runtime info containing `DIR`, `ROOT`, `START`, `QUERY`, and `URI`.
   - `DIR`: Directory map (from defaults + any DIR_* overrides).
   - `SET`: Settings map (from defaults + any SET_* overrides).
 
