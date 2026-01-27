@@ -276,7 +276,7 @@
         extract(HELPERS, EXTR_SKIP);
         
         require PAGEFILE;
-      });
+      }, true);
     }
     
     if(defined('REDIRECT')) {
@@ -352,7 +352,7 @@
                   echo sprintf($html[$constant], $asset);
                 }
               }
-            });
+            }, true);
           }
         }
       }
@@ -432,14 +432,26 @@ function path($locator = null, $actual = false) {
   }
 }
 
-function relay($define, $content) {
-  if(is_callable($content)) {
-    ob_start();
-      $content();
-    $content = ob_get_clean();
-  }
+function relay($name, $content = null, $define = false) {  
+  $name = $define ? strtoupper($name) : strtolower($name);
   
-  define(strtoupper($define), $content);
+  static $bag = [];
+  
+  if(is_null($content)) {
+    return $bag[$name] ?? null;
+  } else {
+    if($content instanceof closure) {
+      ob_start();
+        $content();
+      $content = ob_get_clean();
+    }
+    
+    if($define === true && !defined($name)) {
+      define($name, $content);
+    } else {
+      $bag[$name] = $content;
+    }
+  }
 }
 
 function scribe($string, $replace = []) {
