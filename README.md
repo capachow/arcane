@@ -116,14 +116,18 @@ Arcane keeps things minimal. You can build simple to complex applications using 
 <?= path(['HELPERS', 'custom.php'], true); ?>
 ```
 
-2.3 **`relay(string, mixed)`**: This is how you "yield" data from a page to the layout.
+2.3 **`relay(string, mixed, [bool])`**: Pass variables or content blocks from your page to your layout.
 
-  - **Usage**: Pages pass data with `relay('TITLE', 'My Page')`. Layouts then echo `TITLE`.
-  - **Advanced**: If you pass a function (callable), Arcane captures the output and relays the resulting HTML.
+  - **Usage**: Pages pass data with `relay('key', 'value')`. Layouts then use `relay('key')`.
+  - **Constants**: Pass `true` as the third parameter to define a constant.
+  - **Blocks**: Pass a function to capture a block of HTML to inject into the layout.
+
+*Note*: Keys are case-insensitive and automatically normalized. Variables are always stored as lowercase (`title`) and constants as uppercase (`SITE`).
 
 ``` php
-<?php relay('TITLE', 'Home'); ?>
-<?php relay('SIDEBAR', function() { ?>
+<?php relay('SITE', 'Name', true); ?>
+<?php relay('title', 'Home'); ?>
+<?php relay('sidebar', function() { ?>
   <h2>Sidebar</h2>
   <p>Injected into the layout.</p>
 <?php }); ?>
@@ -179,23 +183,21 @@ Arcane separates logic from presentation using a simple wrapper system.
   1. **The Page**: Executes first. It defines data, handles logic, and outputs HTML. This output is captured in the constant `CONTENT`.
   2. **The Layout**: Executes second. It outputs the HTML structure (`<html>`, `<body>`) and echoes `CONTENT` where the page should appear.
 
-The layout also has access to `STYLES` and `SCRIPTS` (auto-generated tags) and any constants you defined in the page using `relay()`.
+The layout automatically receives `CONTENT`, `STYLES`, and `SCRIPTS` as global constants. Any custom data passed from the page is retrieved using the `relay()` function.
 
 *Example*: `layouts/default.php`
 
 ``` php
 <html>
   <head>
-    <title><?= defined('TITLE') ? TITLE : 'Arcane'; ?></title>\
+    <title><?= relay('title') ?? SITE; ?></title>
     <?= STYLES; ?>
   </head>
   <body>
       <?= CONTENT; ?>
-      <?php if(defined('SIDEBAR')) { ?>
-        <aside>
-          <?= SIDEBAR; ?>
-        </aside>
-      <?php } ?>
+      <aside>
+        <?= relay('sidebar') ?>
+      </aside>
       <?= SCRIPTS; ?>
   </body>
 </html>
