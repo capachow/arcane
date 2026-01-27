@@ -73,7 +73,7 @@ Arcane keeps things minimal. You can build simple to complex applications using 
 
 2.1 **`env(string, string)`**: Retrieves environment variables or feature flags.
 
-- *Note*: Automatically converts strings `true`, `false`, or `null` into actual booleans or nulls.
+- *Note*: Automatically converts strings `true`, `false`, or `null` into actual bool or nulls.
 
 ``` php
 <?php $mode = env('IS_ALLOWED', 'true'); ?>
@@ -81,7 +81,7 @@ Arcane keeps things minimal. You can build simple to complex applications using 
 <?php if(env('IS_ALLOWED')) { ... } ?>
 ```
 
-2.2 **`path(mixed, boolean)`**: The unified tool for inspecting where you are and generating where you want to go.
+2.2 **`path(mixed, bool)`**: The unified tool for inspecting where you are and generating where you want to go.
 
   -  A. **Current Request** [empty]:
 
@@ -107,7 +107,7 @@ Arcane keeps things minimal. You can build simple to complex applications using 
 <?= path(['IMAGES', 'logo.svg']); # /images/logo.svg (no matter the URL) ?>
 ```
 
-  - D. **System Path** [string|array][boolean]:
+  - D. **System Path** [string|array][bool]:
 
     - Pass `true` as the second argument to get the absolute server path for `include()` or `require()`.
 
@@ -116,7 +116,7 @@ Arcane keeps things minimal. You can build simple to complex applications using 
 <?= path(['HELPERS', 'custom.php'], true); ?>
 ```
 
-2.3 **`relay(string, mixed, [bool])`**: Pass variables or content blocks from your page to your layout.
+2.3 **`relay(string, mixed, bool)`**: Pass variables or content blocks from your page to your layout.
 
   - **Usage**: Pages pass data with `relay('key', 'value')`. Layouts then use `relay('key')`.
   - **Constants**: Pass `true` as the third parameter to define a constant.
