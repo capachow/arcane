@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Arcane 26.01.3 Microframework
+ * Arcane 26.03.1 Microframework
  * Copyright 2017-2026 Joshua Britt
  * MIT License https://arcane.dev
 **/
