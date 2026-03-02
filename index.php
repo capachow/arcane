@@ -132,7 +132,7 @@
           break;
         }
 
-        if(strpos($locale, '+') !== false) {
+        if(str_contains($locale, '+')) {
           $uri = $major;
           $minor = null;
         } else {
@@ -210,9 +210,9 @@
         foreach(LOCALES as $locales) {
           foreach($locales as $locale) {
             if(!strcasecmp($locale['CODE'], $code)) {
-              header('Location: ' . rtrim("{$locale['URI']}/{$uri}", '/'));
+              $redirect = rtrim("{$locale['URI']}/{$uri}", '/');
 
-              exit;
+              exit(header('Location: ' . $redirect));
             }
           }
         }
@@ -295,9 +295,7 @@
         $redirect = path(REDIRECT);
       }
 
-      header('Location: ' . ($redirect ?? REDIRECT));
-
-      exit;
+      exit(header('Location: ' . ($redirect ?? REDIRECT)));
     } else if(defined('ROUTES')) {
       $facade = array_diff_assoc(URI, $path);
 
@@ -327,9 +325,7 @@
     }
 
     if(array_diff(URI, $path)) {
-      header('Location: ' . path(implode('/', $path)));
-
-      exit;
+      exit(header('Location: ' . path(implode('/', $path))));
     } else {
       if(defined('LAYOUT') || !empty(SET['LAYOUT'])) {
         $layout = defined('LAYOUT') ? LAYOUT : SET['LAYOUT'];
@@ -426,9 +422,13 @@ function path($locator = null, $actual = false) {
       }
     }
 
-    if(strpos($locator, '.') === false) {
-      if(defined('LOCALE') && !$actual) {
+    if(!$actual && !str_contains($locator, '.')) {
+      if(defined('LOCALE')) {
         $prepend = LOCALE['URI'];
+      }
+
+      if(!str_contains($locator, '?')) {
+        $locator = rtrim("{$locator}", '/');
       }
     }
 
