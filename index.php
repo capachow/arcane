@@ -65,11 +65,10 @@
           '<IfModule mod_rewrite.c>',
           '  RewriteEngine On',
           '  RewriteRule (^|/)\. - [F]',
-          '  RewriteCond %{REQUEST_URI} !(/$|\.|^$)',
-          '  RewriteRule ^(.*)$ %{REQUEST_URI}/ [L,R=301]',
+          '  RewriteCond %{REQUEST_FILENAME} !-d',
+          '  RewriteCond %{REQUEST_URI} (.+)/$',
+          '  RewriteRule ^ %1 [L,R=301]',
           '  RewriteCond %{REQUEST_FILENAME} !-f',
-          '  RewriteRule . index.php [L]',
-          '  RewriteCond %{REQUEST_FILENAME} -d',
           '  RewriteRule . index.php [L]',
           '</IfModule>'
         ]);
@@ -145,7 +144,7 @@
           'COUNTRY' => $country,
           'FILES' => $files,
           'LANGUAGE' => $language,
-          'URI' => APP['ROOT'] . "{$uri}/",
+          'URI' => APP['ROOT'] . "{$uri}",
         ];
       }
     }
@@ -201,7 +200,7 @@
         foreach(LOCALES as $locales) {
           foreach($locales as $locale) {
             if(!strcasecmp($locale['CODE'], $code)) {
-              header("Location: {$locale['URI']}" . ltrim("{$uri}/", '/'));
+              header('Location: ' . rtrim("{$locale['URI']}/{$uri}", '/'));
 
               exit;
             }
@@ -399,7 +398,7 @@ function env($variable, $default = null) {
 
 function path($locator = null, $actual = false) {
   if(is_null($locator)) {
-    return str_replace('//', '/', '/' . implode('/', URI) . '/');
+    return str_replace('//', '/', '/' . implode('/', URI));
   } else if(is_int($locator)) {
     return URI[$locator] ?? null;
   } else {
@@ -420,10 +419,6 @@ function path($locator = null, $actual = false) {
     if(strpos($locator, '.') === false) {
       if(defined('LOCALE') && !$actual) {
         $prepend = LOCALE['URI'];
-      }
-
-      if(strpos($locator, '?') === false) {
-        $locator = "{$locator}/";
       }
     }
 

@@ -420,8 +420,8 @@ Arcane is minimal by design. It doesn't include heavy tomes, but it offers a sys
   - **NGINX users:** Requires routing traffic to the front controller. Add this to your `server` block alongside your existing PHP execution directive:
     ```nginx
     location / {
-        rewrite ^([^.]*[^/])$ $1/ permanent;
-        try_files $uri $uri/ /index.php?$query_string;
+      rewrite ^/(.*)/$ /$1 permanent;
+      try_files $uri $uri/ /index.php?$query_string;
     }
     ```
   - [Arcane Helpers](https://github.com/MEDIA76/arcane-helpers) is a collection of drop-in files for common tasks (Markdown parsing, OAuth, database access).
