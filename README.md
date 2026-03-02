@@ -415,7 +415,15 @@ Arcane provides global constants to give you instant access to the application s
 
 Arcane is minimal by design. It doesn't include heavy tomes, but it offers a system to plug them in easily.
 
-  - Arcane **requires** PHP >= 8.2 and Apache with the `AllowOverride All` directive enabled.
+  - Arcane **requires** PHP >= 8.2.
+  - **Apache users:** Works automatically provided the `AllowOverride All` directive is enabled (Arcane will generate the required `.htaccess` file for you).
+  - **NGINX users:** Requires routing traffic to the front controller. Add this to your `server` block alongside your existing PHP execution directive:
+    ```nginx
+    location / {
+        rewrite ^([^.]*[^/])$ $1/ permanent;
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+    ```
   - [Arcane Helpers](https://github.com/MEDIA76/arcane-helpers) is a collection of drop-in files for common tasks (Markdown parsing, OAuth, database access).
   - [Creating an issue](https://github.com/MEDIA76/arcane/issues) on GitHub for reporting bugs is always appreciated.
 
