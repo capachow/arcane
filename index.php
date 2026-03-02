@@ -157,6 +157,16 @@
     $uri = array_filter(array_merge([''], explode('/', $uri)), 'strlen');
 
     if(!empty($uri)) {
+      if(str_ends_with(APP['URI'], '/')) {
+        $redirect = rtrim(APP['URI'], '/');
+
+        if(APP['QUERY'] !== '') {
+          $redirect = "{$redirect}?" . APP['QUERY'];
+        }
+
+        exit(header('Location: ' . $redirect, true, 301));
+      }
+
       if(array_key_exists($uri[1], LOCALES)) {
         if(isset($uri[2]) && array_key_exists($uri[2], LOCALES[$uri[1]])) {
           $locale = LOCALES[$uri[1]][$uri[2]];
