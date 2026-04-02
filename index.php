@@ -32,7 +32,7 @@
       'DIR' => dirname($_SERVER['SCRIPT_FILENAME']) . '/',
       'ROOT' => rtrim($_SERVER['DOCUMENT_ROOT'], '/') . '/',
       'START' => $_SERVER['REQUEST_TIME_FLOAT'],
-      'QUERY' => urldecode($_SERVER['QUERY_STRING']),
+      'QUERY' => urldecode($_SERVER['QUERY_STRING'] ?? ''),
       'URI' => strtok($_SERVER['REQUEST_URI'], '?')
     ];
 
