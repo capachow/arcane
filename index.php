@@ -33,7 +33,7 @@
       'ROOT' => rtrim($_SERVER['DOCUMENT_ROOT'] ?? '', '/') . '/',
       'START' => $_SERVER['REQUEST_TIME_FLOAT'] ?? microtime(true),
       'QUERY' => $_SERVER['QUERY_STRING'] ?? '',
-      'URI' => strtok($_SERVER['REQUEST_URI'] ?? '/', '?')
+      'URI' => urldecode(strtok($_SERVER['REQUEST_URI'] ?? '/', '?'))
     ];
 
     $app['ROOT'] = rtrim(realpath($app['ROOT']) ?: $app['ROOT'], '/') . '/';
