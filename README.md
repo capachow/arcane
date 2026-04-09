@@ -424,8 +424,8 @@ location / {
   try_files $uri $uri/ /index.php?$query_string;
 }
 ```
-  - [Arcane Helpers](https://github.com/MEDIA76/arcane-helpers) is a collection of drop-in files for common tasks (Markdown parsing, OAuth, database access).
-  - [Creating an issue](https://github.com/MEDIA76/arcane/issues) on GitHub for reporting bugs is always appreciated.
+  - [Arcane Helpers](https://github.com/capachow/arcane-helpers) is a collection of drop-in files for common tasks (Markdown parsing, OAuth, database access).
+  - [Creating an issue](https://github.com/capachow/arcane/issues) on GitHub for reporting bugs is always appreciated.
 
 *License*: Copyright 2017-2026 [Joshua Britt](https://github.com/capachow) under the [MIT](LICENSE.md).
 
