@@ -2,7 +2,7 @@
 
 > *Arcane is unconventional but beautifully intuitive. It is intentionally different, breaking away from modern frameworks to encourage critical thinking without the dependence and overhead of complex systems. It brings out the fun in building for the web by automating the features you want, while making it easier to apply the ones you need.*
 
-At its core, Arcane is a tiny `12kb` single-file PHP microframework designed to keep things easy and minimal. It uses a filesystem-first workflow where files map directly to routes, and context-aware helpers and assets load automatically. Perfect for anyone who wants a fast, flexible tool with zero setup.
+At its core, Arcane is a tiny `13kb` single-file PHP microframework designed to keep things easy and minimal. It uses a filesystem-first workflow where files map directly to routes, and context-aware helpers and assets load automatically. Perfect for anyone who wants a fast, flexible tool with zero setup.
 
   - Clean configuration free URLs
   - Unique filesystem defined routing
@@ -415,17 +415,15 @@ Arcane provides global constants to give you instant access to the application s
 
 Arcane is minimal by design. It doesn't include heavy tomes, but it offers a system to plug them in easily.
 
-  - Arcane **requires** PHP >= 8.2.
+  - Arcane **requires** PHP >= 8.4.
   - **Apache users:** Works automatically provided the `AllowOverride All` directive is enabled (Arcane will generate the required `.htaccess` file for you).
   - **NGINX users:** Requires routing traffic to the front controller. Add this to your `server` block alongside your existing PHP execution directive:
-
-    ```nginx
-    location / {
-      rewrite ^/(.*)/$ /$1 permanent;
-      try_files $uri $uri/ /index.php?$query_string;
-    }
-    ```
-
+```nginx
+location / {
+  rewrite ^/(.*)/$ /$1 permanent;
+  try_files $uri $uri/ /index.php?$query_string;
+}
+```
   - [Arcane Helpers](https://github.com/MEDIA76/arcane-helpers) is a collection of drop-in files for common tasks (Markdown parsing, OAuth, database access).
   - [Creating an issue](https://github.com/MEDIA76/arcane/issues) on GitHub for reporting bugs is always appreciated.
 
