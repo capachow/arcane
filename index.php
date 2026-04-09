@@ -29,11 +29,11 @@
 
   (function() use(&$define) {
     $app = [
-      'DIR' => dirname($_SERVER['SCRIPT_FILENAME']) . '/',
-      'ROOT' => rtrim($_SERVER['DOCUMENT_ROOT'], '/') . '/',
-      'START' => $_SERVER['REQUEST_TIME_FLOAT'],
+      'DIR' => dirname($_SERVER['SCRIPT_FILENAME'] ?? __FILE__) . '/',
+      'ROOT' => rtrim($_SERVER['DOCUMENT_ROOT'] ?? '', '/') . '/',
+      'START' => $_SERVER['REQUEST_TIME_FLOAT'] ?? microtime(true),
       'QUERY' => urldecode($_SERVER['QUERY_STRING']),
-      'URI' => strtok($_SERVER['REQUEST_URI'], '?')
+      'URI' => strtok($_SERVER['REQUEST_URI'] ?? '/', '?')
     ];
 
     define('APP', array_merge($app, [
@@ -200,7 +200,7 @@
 
       define('TRANSCRIPT', $transcript);
     } else if(!empty(SET['LOCALE'])) {
-      $request = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+      $request = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '';
       $default = str_replace('+', '-', SET['LOCALE']);
       $uri = implode('/', URI);
 
