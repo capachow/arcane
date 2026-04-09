@@ -32,13 +32,15 @@
       'DIR' => dirname($_SERVER['SCRIPT_FILENAME'] ?? __FILE__) . '/',
       'ROOT' => rtrim($_SERVER['DOCUMENT_ROOT'] ?? '', '/') . '/',
       'START' => $_SERVER['REQUEST_TIME_FLOAT'] ?? microtime(true),
-      'QUERY' => urldecode($_SERVER['QUERY_STRING'] ?? ''),
-      'URI' => strtok($_SERVER['REQUEST_URI'] ?? '/', '?')
+      'QUERY' => $_SERVER['QUERY_STRING'] ?? '',
+      'URI' => urldecode(strtok($_SERVER['REQUEST_URI'] ?? '/', '?'))
     ];
+
+    $app['ROOT'] = rtrim(realpath($app['ROOT']) ?: $app['ROOT'], '/') . '/';
 
     define('APP', array_merge($app, [
       'DIR' => str_replace('\\', '/', $app['DIR']),
-      'ROOT' => substr($app['DIR'], strlen($app['ROOT']) - 1)
+      'ROOT' => substr(str_replace('\\', '/', $app['DIR']), strlen($app['ROOT']) - 1)
     ]));
 
     if(file_exists('.env') || file_exists('.env.example')) {
@@ -109,7 +111,7 @@
   (function() {
     $directory = rtrim(path(DIR['LOCALES'], true), '/');
 
-    foreach(glob("{$directory}/*/*[-+]*.json") as $locale) {
+    foreach(glob("{$directory}/*/*[-+]*.json") ?: [] as $locale) {
       $tag = basename($locale, '.json');
       $major = basename(dirname($locale));
       $minor = explode('-', str_replace('+', '-', $tag), 2);
@@ -133,8 +135,7 @@
         }
 
         if(str_contains($locale, '+')) {
-          $uri = $major;
-          $minor = null;
+          list($uri, $minor) = [$major, ''];
         } else {
           $uri = "{$major}/{$minor}";
         }
@@ -154,7 +155,8 @@
 
   (function() {
     $uri = rtrim(substr(APP['URI'], strlen(APP['ROOT'])), '/');
-    $uri = array_filter(array_merge([''], explode('/', $uri)), 'strlen');
+    $uri = array_diff(explode('/', $uri), ['.', '..']);
+    $uri = array_filter(array_merge([''], $uri), 'strlen');
 
     if(!empty($uri)) {
       if(str_ends_with(APP['URI'], '/')) {
@@ -270,7 +272,7 @@
       $directory = rtrim(path($directory, true), '/');
 
       if(is_dir($directory)) {
-        foreach(glob("{$directory}/*.php") as $helper) {
+        foreach(glob("{$directory}/*.php") ?: [] as $helper) {
           $helpers[basename($helper, '.php')] = include($helper);
         }
       }
@@ -291,7 +293,7 @@
     }
 
     if(defined('REDIRECT')) {
-      if(!array_key_exists('host', parse_url(REDIRECT))) {
+      if(!parse_url(REDIRECT, PHP_URL_HOST)) {
         $redirect = path(REDIRECT);
       }
 
@@ -310,11 +312,11 @@
               if(!in_array($segment, $route[$increment])) {
                 break;
               }
-            } else if($route[$increment] !== $segment) {
+            } else if(!in_array($route[$increment], ['*', $segment])) {
               break;
             }
 
-            if(end($facade) === $segment) {
+            if($increment === count($facade) - 1) {
               $path = $path + $facade;
 
               break 2;
