@@ -204,9 +204,9 @@
       $default = str_replace('+', '-', SET['LOCALE']);
       $uri = implode('/', URI);
 
-      preg_match_all("/[a-z]{2}-[a-z]{2}/i", $request, $request);
+      preg_match_all("/[a-z]{2}-[a-z]{2}/i", $request, $matches);
 
-      foreach(array_merge(reset($request), [$default]) as $code) {
+      foreach(array_merge(reset($matches), [$default]) as $code) {
         foreach(LOCALES as $locales) {
           foreach($locales as $locale) {
             if(!strcasecmp($locale['CODE'], $code)) {
