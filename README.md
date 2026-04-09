@@ -415,7 +415,7 @@ Arcane provides global constants to give you instant access to the application s
 
 Arcane is minimal by design. It doesn't include heavy tomes, but it offers a system to plug them in easily.
 
-  - Arcane **requires** PHP >= 8.2.
+  - Arcane **requires** PHP >= 8.4.
   - **Apache users:** Works automatically provided the `AllowOverride All` directive is enabled (Arcane will generate the required `.htaccess` file for you).
   - **NGINX users:** Requires routing traffic to the front controller. Add this to your `server` block alongside your existing PHP execution directive:
 ```nginx
