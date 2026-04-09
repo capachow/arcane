@@ -1,8 +1,11 @@
 blank_issues_enabled: false
 contact_links:
+  - name: Discussions
+    url: https://github.com/capachow/arcane/discussions
+    about: Ask questions and share ideas
   - name: Join Discord
     url: https://chat.arcane.dev
     about: Chat and discuss questions
   - name: Documentation
-    url: https://docs.arcane.dev
+    url: https://github.com/capachow/arcane/blob/master/README.md#documentation
     about: How-to guide and examples
