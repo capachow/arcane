@@ -29,11 +29,11 @@
 
   (function() use(&$define) {
     $app = [
-      'DIR' => dirname($_SERVER['SCRIPT_FILENAME']) . '/',
-      'ROOT' => rtrim($_SERVER['DOCUMENT_ROOT'], '/') . '/',
-      'START' => $_SERVER['REQUEST_TIME_FLOAT'],
+      'DIR' => dirname($_SERVER['SCRIPT_FILENAME'] ?? __FILE__) . '/',
+      'ROOT' => rtrim($_SERVER['DOCUMENT_ROOT'] ?? '', '/') . '/',
+      'START' => $_SERVER['REQUEST_TIME_FLOAT'] ?? microtime(true),
       'QUERY' => urldecode($_SERVER['QUERY_STRING'] ?? ''),
-      'URI' => strtok($_SERVER['REQUEST_URI'], '?')
+      'URI' => strtok($_SERVER['REQUEST_URI'] ?? '/', '?')
     ];
 
     define('APP', array_merge($app, [
@@ -164,7 +164,7 @@
           $redirect = "{$redirect}?" . APP['QUERY'];
         }
 
-        exit(header('Location: ' . $redirect, true, 301));
+        exit(header("Location: {$redirect}", true, 301));
       }
 
       if(array_key_exists($uri[1], LOCALES)) {
@@ -172,8 +172,8 @@
           $locale = LOCALES[$uri[1]][$uri[2]];
 
           array_splice($uri, 0, 2);
-        } else if(array_key_exists(null, LOCALES[$uri[1]])) {
-          $locale = LOCALES[$uri[1]][null];
+        } else if(array_key_exists('', LOCALES[$uri[1]])) {
+          $locale = LOCALES[$uri[1]][''];
 
           array_splice($uri, 0, 1);
         }
@@ -200,19 +200,19 @@
 
       define('TRANSCRIPT', $transcript);
     } else if(!empty(SET['LOCALE'])) {
-      $request = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+      $request = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '';
       $default = str_replace('+', '-', SET['LOCALE']);
       $uri = implode('/', URI);
 
-      preg_match_all("/[a-z]{2}-[a-z]{2}/i", $request, $request);
+      preg_match_all("/[a-z]{2}-[a-z]{2}/i", $request, $matches);
 
-      foreach(array_merge(reset($request), [$default]) as $code) {
+      foreach(array_merge(reset($matches), [$default]) as $code) {
         foreach(LOCALES as $locales) {
           foreach($locales as $locale) {
             if(!strcasecmp($locale['CODE'], $code)) {
               $redirect = rtrim("{$locale['URI']}/{$uri}", '/');
 
-              exit(header('Location: ' . $redirect));
+              exit(header("Location: {$redirect}"));
             }
           }
         }
@@ -236,7 +236,7 @@
 
       if(!is_file($page) && is_dir(substr($page, 0, -4) . '/')) {
         $page = rtrim(str_replace('.php', '', $page), '/');
-        $page = "$page/" . SET['INDEX'] . '.php';
+        $page = "{$page}/" . SET['INDEX'] . '.php';
       }
 
       if(is_file($page) && end($path) !== SET['INDEX']) {
@@ -374,8 +374,7 @@
           "/\>[^\S ]+/m" => ">",
           "/^\h+\</m" => "<",
           "/[^\S ]+\</m" => "<",
-          "/\>\s{2,}\</" => "><",
-          "//s" => ""
+          "/\>\s{2,}\</" => "><"
           ]), $minify, $content);
       } else {
         return $content;
@@ -480,5 +479,3 @@ function scribe($string, $replace = []) {
 
   return $string;
 }
-
-?>
