@@ -1,7 +1,7 @@
 {
     "name": "capachow/arcane",
     "type": "project",
-    "description": "A deceptively powerful 12kb dependency-free single-file PHP microframework built to keep things easy and minimal.",
+    "description": "A deceptively powerful 13kb dependency-free single-file PHP microframework built to keep things easy and minimal.",
     "keywords": [
         "php",
         "web-development",

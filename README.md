@@ -2,7 +2,7 @@
 
 > *Arcane is unconventional but beautifully intuitive. It is intentionally different, breaking away from modern frameworks to encourage critical thinking without the dependence and overhead of complex systems. It brings out the fun in building for the web by automating the features you want, while making it easier to apply the ones you need.*
 
-At its core, Arcane is a tiny `12kb` single-file PHP microframework designed to keep things easy and minimal. It uses a filesystem-first workflow where files map directly to routes, and context-aware helpers and assets load automatically. Perfect for anyone who wants a fast, flexible tool with zero setup.
+At its core, Arcane is a tiny `13kb` single-file PHP microframework designed to keep things easy and minimal. It uses a filesystem-first workflow where files map directly to routes, and context-aware helpers and assets load automatically. Perfect for anyone who wants a fast, flexible tool with zero setup.
 
   - Clean configuration free URLs
   - Unique filesystem defined routing
