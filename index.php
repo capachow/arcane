@@ -289,6 +289,51 @@
         extract(HELPERS, EXTR_SKIP);
 
         require PAGEFILE;
+
+        if (is_file($html = str_replace('.php', '.html', PAGEFILE))) {
+          if (!function_exists('php')) {
+            function php($value, $escape = false) {
+              if ($escape && $value) {
+                $value = htmlspecialchars($value, ENT_QUOTES);
+              }
+
+              return $value;
+            }
+          }
+
+          $html = preg_replace(str_replace([
+              '{attribute}', '{variable}', '{allow}', '{argument}'
+            ], [
+              ':\s*=\s*(?P<q>[\'"])(.*?)(?P=q)',
+              '\$[a-z_]\w*(->\w+(\s*\(([^()]|\([^()]*\))*\))?)*',
+              '(?:php|scribe|relay|path|env)',
+              '\(((?:[^()]|\([^()]*\))*)\)'
+            ], [
+            "/<--\s.*?-->/s",
+            "/<(if|elseif|foreach)\s+{attribute}\s*>/s",
+            "/<\/(if|foreach)>/",
+            "/<(else)\s*\/?>/",
+            "/<(break|continue)\s*\/?>/",
+            "/<include\s+{attribute}\s*\/?>/s",
+            "/<({allow})\s+{attribute}\s*\/?>/s",
+            "/(?:<echo\s+)?{attribute}(?:\s*\/?>)?/s",
+            "/:\s*=?\s*({allow}\s*{argument})/si",
+            "/:\s*=?\s*({variable})/i"
+          ]), [
+            '',
+            '<?php $1($3): ?>',
+            '<?php end$1; ?>',
+            '<?php $1: ?>',
+            '<?php $1; ?>',
+            '<?php include $2; ?>',
+            '<?= $1($3); ?>',
+            '<?= php($2, true); ?>',
+            '<?= $1; ?>',
+            '<?= php($1, true); ?>'
+          ], file_get_contents($html));
+
+          eval('?>' . $html);
+        }
       }, true);
     }
 
