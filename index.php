@@ -285,12 +285,18 @@
     $path = PATH;
 
     if (defined('PAGEFILE')) {
+      $view = substr(PAGEFILE, 0, -4) . '.html';
+
+      if (is_file($view)) {
+        define('VIEWFILE', $view);
+      }
+
       relay('CONTENT', function () {
         extract(HELPERS, EXTR_SKIP);
 
         require PAGEFILE;
 
-        if (is_file($html = str_replace('.php', '.html', PAGEFILE))) {
+        if (defined('VIEWFILE')) {
           if (!function_exists('php')) {
             function php($value, $escape = false) {
               if ($escape && $value) {
@@ -301,7 +307,7 @@
             }
           }
 
-          $html = preg_replace(str_replace([
+          eval('?>' . preg_replace(str_replace([
               '{attribute}', '{variable}', '{allow}', '{argument}'
             ], [
               ':\s*=\s*(?P<q>[\'"])(.*?)(?P=q)',
@@ -330,9 +336,7 @@
             '<?= php($2, true); ?>',
             '<?= $1; ?>',
             '<?= php($1, true); ?>'
-          ], file_get_contents($html));
-
-          eval('?>' . $html);
+          ], file_get_contents(VIEWFILE)));
         }
       }, true);
     }

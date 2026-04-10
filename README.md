@@ -218,8 +218,8 @@ Arcane ships with a built-in, regex-powered MV engine. Simply create an `.html` 
 
 Values output using the engine are automatically wrapped in `htmlspecialchars()` to protect your application from XSS attacks by default.
 
-  - **Shorthand (`:`):** Best for simple variables and object methods (`:$title`, `:$user->getName()`). *Note: Shorthand does not support array brackets. Use the implicit echo instead.*
-  - **Implicit (`:=`):** Best for arrays, complex expressions, or string interpolation. When interpolating strings, use single quotes on the outside and double quotes on the inside: `:='"Welcome back, {$user->name}"'`.
+  - **Shorthand (`:`):** Best for simple variables and object methods. Does not support array brackets.
+  - **Implicit (`:=`):** Best for arrays, complex expressions, or string interpolation. When interpolating, use single quotes on the outside and double quotes on the inside.
   - **Explicit (`<echo>`):** The explicit HTML-style tag for outputting expressions.
 
 ```html
@@ -230,6 +230,7 @@ Values output using the engine are automatically wrapped in `htmlspecialchars()`
 <!-- Implicit (equals used, quotes required) -->
 <h2>:="$user['name']"</h2>
 <h2>:='"Welcome back, {$user->name}"'</h2>
+<p>:="number_format($price, 2)"</p>
 
 <!-- Explicit (equals used, quotes required) -->
 <p><echo :="$description" /></p>
@@ -237,7 +238,7 @@ Values output using the engine are automatically wrapped in `htmlspecialchars()`
 
 5.2 **Whitelisted Functions**
 
-If you need to execute a core Arcane function (`php`, `scribe`, `relay`, `path`, `env`) and output raw, unescaped HTML, you can call them directly. They support both the `:<function>()` shorthand and the explicit `<function :="">` tag.
+If you need to execute a core Arcane function (`php`, `scribe`, `relay`, `path`, `env`) or output raw, unescaped HTML (like parsed Markdown or rich text), you can call them directly. They support both the `:<function>()` shorthand and the explicit `<function :="">` tag.
 
 ```html
 <!-- Shorthand (no equals, no quotes) -->
@@ -279,7 +280,7 @@ You can easily pull in other HTML partials, and developer comments are completel
 <include :="'partials/header.php'" />
 ```
 
-*Note on Performance:* Currently, Arcane evaluates these compiled HTML strings in memory (`eval`). This is fast and completely secure (since it only evaluates local `.html` files you write). It serves as a highly capable engine until future native integration with a file-based caching system is introduced to unlock maximum speeds.
+*Performance:* Currently, Arcane evaluates these compiled HTML strings in memory (`eval`). This is fast and completely secure (since it only evaluates local `.html` files you write). It serves as a highly capable engine until future native integration with a file-based caching system is introduced to unlock maximum speeds.
 
 ---
 
@@ -464,6 +465,7 @@ Arcane provides global constants to give you instant access to the application s
   - `PATH`: The resolved “base path” for the matched page.
   - `PATHS`: Hierarchical path list used for helper/asset discovery.
   - `PAGEFILE`: Absolute path to the resolved PHP page file.
+  - `VIEWFILE`: Absolute path to the uncompiled HTML view file (when used).
   - `LAYOUTFILE`: Absolute path to the resolved PHP layout file (when used).
 
 11.3 **Localization**:
