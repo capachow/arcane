@@ -481,3 +481,44 @@ function scribe($string, $replace = []) {
 
   return $string;
 }
+
+function stash($path, $content = null) {
+  if (!strstr($path, APP['DIR'])) {
+    $path = path($path, true);
+  }
+
+  if (is_dir($path)) {
+    $access = fileatime($path);
+  } elseif (is_file($path)) {
+    $access = filemtime($path);
+  }
+
+  if (isset($access)) {
+    $file = path(DIR['CACHES'], true) . crc32($path);
+    $file = $file . '.' . $access . '.php';
+
+    if (is_bool($content)) {
+      return (file_exists($file) == $content);
+    } elseif (is_null($content)) {
+      if (file_exists($file)) {
+        $content = file_get_contents($file);
+
+        if (preg_match("/^[aO]:.+}$/", $content)) {
+          $content = unserialize($content);
+        }
+      }
+
+      return $content;
+    } else {
+      array_map('unlink', glob(strtok($file, '.') . '.*.php'));
+
+      if (is_array($content) || is_object($content)) {
+        $content = serialize($content);
+      }
+
+      file_put_contents($file, $content);
+    }
+  } else {
+    return false;
+  }
+}
