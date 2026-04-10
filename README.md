@@ -2,12 +2,13 @@
 
 > *Arcane is unconventional but beautifully intuitive. It is intentionally different, breaking away from modern frameworks to encourage critical thinking without the dependence and overhead of complex systems. It brings out the fun in building for the web by automating the features you want, while making it easier to apply the ones you need.*
 
-At its core, Arcane is a tiny `13kb` single-file PHP microframework designed to keep things easy and minimal. It uses a filesystem-first workflow where files map directly to routes, and context-aware helpers and assets load automatically. Perfect for anyone who wants a fast, flexible tool with zero setup.
+At its core, Arcane is a tiny `14kb` single-file PHP microframework designed to keep things easy and minimal. It uses a filesystem-first workflow where files map directly to routes, and context-aware helpers and assets load automatically. Perfect for anyone who wants a fast, flexible tool with zero setup.
 
   - Clean configuration free URLs
   - Unique filesystem defined routing
   - Helpers autoloaded by context
   - Layouts wrap pages automatically
+  - Optional MV engine compiled views
   - Robust localization kept simple
   - Architecture driven by directories
   - Simple ENV file configuration
@@ -35,14 +36,16 @@ Simply drop `index.php` into your project and open it in your browser. Arcane co
 2. [The Four Functions](#2-the-four-functions)
 3. [Routing & Pages](#3-routing--pages)
 4. [Layouts, Rendering, and Includes](#4-layouts-rendering-and-includes)
-5. [Helpers & Autoload Cascade](#5-helpers--autoload-cascade)
-6. [Automatic CSS/JS Assets](#6-automatic-cssjs-assets)
-7. [Localization and Translation](#7-localization-and-translation)
-8. [Environment & Settings](#8-environment--settings)
-9. [Page Directives](#9-page-directives)
-10. [Runtime Constants](#10-runtime-constants)
-11. [Troubleshooting & Notes](#11-troubleshooting--notes)
-12. [Requirements and Ecosystem](#12-requirements-and-ecosystem)
+5. [Optional Model-View Engine](#5-optional-model-view-engine)
+6. [Helpers & Autoload Cascade](#6-helpers--autoload-cascade)
+7. [Automatic CSS/JS Assets](#7-automatic-cssjs-assets)
+8. [Localization and Translation](#8-localization-and-translation)
+9. [Environment & Settings](#9-environment--settings)
+10. [Page Directives](#10-page-directives)
+11. [Runtime Constants](#11-runtime-constants)
+12. [Troubleshooting & Notes](#12-troubleshooting--notes)
+13. [Requirements and Ecosystem](#13-requirements-and-ecosystem)
+<!-- 14. [The Meaning of Arcane](#14-the-meaning-of-arcane) -->
 
 ---
 
@@ -61,7 +64,7 @@ Dependencies also break. They age, conflict, and require maintenance. Arcane sta
 Instead of a complex event loop, Arcane follows a linear path of discovery:
 
 1. **Match:** The URL is mapped directly to the closest physical file in `/pages`, normalizing paths for SEO.
-2. **Collect:** Arcane walks the directory tree down to that file, channels only relevant helpers, data, and assets.
+2. **Collect:** Arcane walks the directory tree down to that file, channeling only relevant helpers, data, and assets.
 3. **Build:** The page executes within this prepared environment, generating the `CONTENT` constant.
 4. **Return:** Output is wrapped in the layout, assets are injected, and the final response is sent to the browser.
 
@@ -205,7 +208,83 @@ The layout automatically receives `CONTENT`, `STYLES`, and `SCRIPTS` as global c
 
 ---
 
-### 5. Helpers & Autoload Cascade
+### 5. Optional Model-View Engine
+
+Arcane ships with a built-in, regex-powered MV engine. Create an `.html` (view) file alongside your `.php` (model) file. Your model handles the data logic, while the engine compiles your view into native PHP for safe rendering.
+
+**The Golden Rule of Syntax:** If you use an equals sign (`=`), you must wrap your PHP expression in quotes. If you don't use an equals sign, no quotes are needed.
+
+5.1 **Auto-Escaped Variables**
+
+Values output using the engine are automatically wrapped in `htmlspecialchars()` to protect your application from XSS attacks by default.
+
+  - **Shorthand (`:`):** Best for simple variables and object methods. Does not support array brackets.
+  - **Implicit (`:=`):** Best for arrays, complex expressions, or string interpolation. When interpolating, use single quotes on the outside and double quotes on the inside.
+  - **Explicit (`<echo>`):** The explicit HTML-style tag for outputting expressions.
+
+```html
+<!-- Shorthand (no equals, no quotes) -->
+<h1>:$title</h1>
+<span>:$user->getName()</span>
+
+<!-- Implicit (equals used, quotes required) -->
+<h2>:="$user['name']"</h2>
+<h2>:='"Welcome back, {$user->name}"'</h2>
+<p>:="number_format($price, 2)"</p>
+
+<!-- Explicit (equals used, quotes required) -->
+<p><echo :="$description" /></p>
+```
+
+5.2 **Whitelisted Functions**
+
+If you need to execute a core Arcane function (`php`, `scribe`, `relay`, `path`, `env`) or output raw, unescaped HTML (like parsed Markdown or rich text), you can call them directly. They support both the `:<function>()` shorthand and the explicit `<function :="">` tag.
+
+```html
+<!-- Shorthand (no equals, no quotes) -->
+<h2>:scribe('welcome_message')</h2>
+<link rel="stylesheet" href=":path('/css/style.css')" />
+
+<!-- Explicit (equals used, quotes required) -->
+<p><php :="'<strong>Raw Bold Text</strong>'" /></p>
+```
+
+5.3 **Control Structures**
+
+Arcane supports standard PHP control structures using clean HTML-style tags. The supported tags are `<if>`, `<elseif>`, `<else>`, `</if>`, `<foreach>`, `</foreach>`, `<break>`, and `<continue>`.
+
+```html
+<if :="$count > 0">
+  <p>You have items!</p>
+<elseif :="$count === 0">
+  <p>Your cart is empty.</p>
+<else>
+  <p>Please log in.</p>
+</if>
+
+<ul>
+  <foreach :="$users as $user">
+    <li>:$user->name</li>
+  </foreach>
+</ul>
+
+<input type="checkbox" <if :="$checked">checked</if> />
+```
+
+5.4 **Includes & Comments**
+
+You can easily pull in other HTML partials, and developer comments are completely stripped from the final compiled code. Included files inherit the exact same variable scope as the parent template.
+
+```html
+<-- This developer note will not appear in the DOM -->
+<include :="'partials/header.php'" />
+```
+
+*Performance:* Currently, Arcane evaluates these compiled HTML strings in memory (`eval`). This is fast and completely secure (since it only evaluates local `.html` files you write). It serves as a highly capable engine until future native integration with a file-based caching system is introduced to unlock maximum speeds.
+
+---
+
+### 6. Helpers & Autoload Cascade
 
 This is one of Arcane's most "refreshing" features. Instead of autoloading every class in the universe, Arcane loads helpers based on context. Helpers are PHP files that return a value (`mixed`). They become variables in your page matching their filename.
 
@@ -251,7 +330,7 @@ return [
 
 ---
 
-### 6. Automatic CSS/JS Assets
+### 7. Automatic CSS/JS Assets
 
 Forget complicated configurations for simple tasks. Arcane uses *convention over wiring*.
 
@@ -269,7 +348,7 @@ For a user visiting `/blog/post` using the `default` layout, Arcane looks for an
 
 ---
 
-### 7. Localization and Translation
+### 8. Localization and Translation
 
 Arcane handles localization via folder naming conventions, supporting both language switching and country specific content.
 
@@ -321,7 +400,7 @@ Arcane weaves translations intelligently. For `en-us`, it loads:
 
   1. `locales/us.json` (country defaults)
   2. `locales/en/en.json` (language defaults)
-  3. `locales/es/en-us.json` (specific overrides)
+  3. `locales/en/en-us.json` (specific overrides)
 
 Later files override earlier ones, allowing you to define a base language and only tweak specific keys for countries.
 
@@ -329,11 +408,11 @@ Later files override earlier ones, allowing you to define a base language and on
 
 ---
 
-### 8. Environment & Settings
+### 9. Environment & Settings
 
 Configuration is handled via `.env`. If `.env` is missing, Arcane defaults to `.env.example`.
 
-8.1 **Key Settings (`SET_`)**:
+9.1 **Key Settings (`SET_`)**:
 
 | Setting | Default | Purpose |
 | :--- | :--- | :--- |
@@ -343,7 +422,7 @@ Configuration is handled via `.env`. If `.env` is missing, Arcane defaults to `.
 | `SET_LOCALE` | `null` | Set a default `BCP 47` tag to enable auto-localization. |
 | `SET_MINIFY` | `true` | Toggles HTML minification to keep output small. |
 
-8.2 **Directories (`DIR_`)**:
+9.2 **Directories (`DIR_`)**:
 
 You can remap any default folder (like `pages` to `views`) by setting `DIR_PAGES` in your environment.
 
@@ -359,7 +438,7 @@ DIR_IMAGES=/images/
 
 ---
 
-### 9. Page Directives
+### 10. Page Directives
 
 Directives are constants defined at the top of a *page* file. They act as the "controller" logic for that specific page.
 
@@ -369,32 +448,33 @@ Directives are constants defined at the top of a *page* file. They act as the "c
 
 ---
 
-### 10. Runtime Constants
+### 11. Runtime Constants
 
 Arcane provides global constants to give you instant access to the application state.
 
-10.1 **Content & Output**:
+11.1 **Content & Output**:
 
   - `CONTENT`: The rendered HTML of the page.
   - `HELPERS`: The merged and injected helpers for pages and layouts.
   - `STYLES`: The injected `<link>` tags (layout must be active).
   - `SCRIPTS`: The injected `<script>` tags (layout must be active).
 
-10.2 **Routing & Location**:
+11.2 **Routing & Location**:
 
   - `URI`: The URL segments array (locale segments removed when applicable).
   - `PATH`: The resolved “base path” for the matched page.
   - `PATHS`: Hierarchical path list used for helper/asset discovery.
   - `PAGEFILE`: Absolute path to the resolved PHP page file.
+  - `VIEWFILE`: Absolute path to the resolved HTML view file (when used).
   - `LAYOUTFILE`: Absolute path to the resolved PHP layout file (when used).
 
-10.3 **Localization**:
+11.3 **Localization**:
 
   - `LOCALES`: Discovered locales grouped by folder.
   - `LOCALE`: Array containing `CODE`, `COUNTRY`, `FILES`, `LANGUAGE`, and `URI` (when active).
   - `TRANSCRIPT`: The merged translations for the active locale (when active).
 
-10.4 **App Configuration**:
+11.4 **App Configuration**:
 
   - `APP`: Derived runtime info containing `DIR`, `ROOT`, `START`, `QUERY`, and `URI`.
   - `DIR`: Directory map (from defaults + any DIR_* overrides).
@@ -402,7 +482,7 @@ Arcane provides global constants to give you instant access to the application s
 
 ---
 
-### 11. Troubleshooting & Notes
+### 12. Troubleshooting & Notes
 
   - **Trailing Slashes**: Arcane normalizes "page-like" routes to have trailing slashes. This prevents duplicate content issues for SEO.
   - **Minification**: By default, `SET_MINIFY` is `true`. It strips whitespace and comments. If your HTML looks broken, try setting this to `false` in `.env` to debug.
@@ -411,7 +491,7 @@ Arcane provides global constants to give you instant access to the application s
 
 ---
 
-### 12. Requirements and Ecosystem
+### 13. Requirements and Ecosystem
 
 Arcane is minimal by design. It doesn't include heavy tomes, but it offers a system to plug them in easily.
 
@@ -431,7 +511,9 @@ location / {
 
 ---
 
-### 13. The Meaning of Arcane
+### 14. The Meaning of Arcane
+
+Since you made it this far down, here is a little easter egg message.
 
 The word *arcane* refers to mysterious knowledge, secrets understood by only a few.
 

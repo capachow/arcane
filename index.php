@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Arcane 26.4.1 Microframework
+ * Arcane 26.4.2 Microframework
  * Copyright 2017-2026 Joshua Britt
  * MIT License https://arcane.dev
 **/
@@ -285,10 +285,59 @@
     $path = PATH;
 
     if (defined('PAGEFILE')) {
+      $view = substr(PAGEFILE, 0, -4) . '.html';
+
+      if (is_file($view)) {
+        define('VIEWFILE', $view);
+      }
+
       relay('CONTENT', function () {
         extract(HELPERS, EXTR_SKIP);
 
         require PAGEFILE;
+
+        if (defined('VIEWFILE')) {
+          if (!function_exists('php')) {
+            function php($value, $escape = false) {
+              if ($escape && $value) {
+                $value = htmlspecialchars($value, ENT_QUOTES);
+              }
+
+              return $value;
+            }
+          }
+
+          eval('?>' . preg_replace(str_replace([
+              '{attribute}', '{variable}', '{allow}', '{argument}'
+            ], [
+              ':\s*=\s*(?P<q>[\'"])(.*?)(?P=q)',
+              '\$[a-z_]\w*(->\w+(\s*\(([^()]|\([^()]*\))*\))?)*',
+              '(?:php|scribe|relay|path|env)',
+              '\(((?:[^()]|\([^()]*\))*)\)'
+            ], [
+            "/<--\s.*?-->/s",
+            "/<(if|elseif|foreach)\s+{attribute}\s*>/s",
+            "/<\/(if|foreach)>/",
+            "/<(else)\s*\/?>/",
+            "/<(break|continue)\s*\/?>/",
+            "/<include\s+{attribute}\s*\/?>/s",
+            "/<({allow})\s+{attribute}\s*\/?>/s",
+            "/(?:<echo\s+)?{attribute}(?:\s*\/?>)?/s",
+            "/:\s*=?\s*({allow}\s*{argument})/si",
+            "/:\s*=?\s*({variable})/i"
+          ]), [
+            '',
+            '<?php $1($3): ?>',
+            '<?php end$1; ?>',
+            '<?php $1: ?>',
+            '<?php $1; ?>',
+            '<?php include $2; ?>',
+            '<?= $1($3); ?>',
+            '<?= php($2, true); ?>',
+            '<?= $1; ?>',
+            '<?= php($1, true); ?>'
+          ], file_get_contents(VIEWFILE)));
+        }
       }, true);
     }
 
