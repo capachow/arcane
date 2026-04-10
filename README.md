@@ -210,7 +210,7 @@ The layout automatically receives `CONTENT`, `STYLES`, and `SCRIPTS` as global c
 
 ### 5. Optional Model-View Engine
 
-Arcane ships with a built-in, regex-powered MV engine. Simply create an `.html` (View) file alongside your `.php` (Model) file. Your Model handles the data logic, and the engine compiles your View into native PHP for safe rendering.
+Arcane ships with a built-in, regex-powered MV engine. Create an `.html` (view) file alongside your `.php` (model) file. Your model handles the data logic, while the engine compiles your view into native PHP for safe rendering.
 
 **The Golden Rule of Syntax:** If you use an equals sign (`=`), you must wrap your PHP expression in quotes. If you don't use an equals sign, no quotes are needed.
 
