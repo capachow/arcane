@@ -39,8 +39,8 @@
     $app['ROOT'] = rtrim(realpath($app['ROOT']) ?: $app['ROOT'], '/') . '/';
 
     define('APP', array_merge($app, [
-      'DIR' => str_replace('\\', '/', $app['DIR']),
-      'ROOT' => substr(str_replace('\\', '/', $app['DIR']), strlen($app['ROOT']) - 1)
+      'DIR' => strtr($app['DIR'], '\\', '/'),
+      'ROOT' => substr(strtr($app['DIR'], '\\', '/'), strlen($app['ROOT']) - 1)
     ]));
 
     if (file_exists('.env') || file_exists('.env.example')) {
@@ -114,7 +114,7 @@
     foreach (glob("{$directory}/*/*[-+]*.json") ?: [] as $locale) {
       $tag = basename($locale, '.json');
       $major = basename(dirname($locale));
-      $minor = explode('-', str_replace('+', '-', $tag), 2);
+      $minor = explode('-', strtr($tag, '+', '-'), 2);
       $minor = $minor[0] === $major ? $minor[1] : $minor[0];
 
       if (ctype_alpha($minor)) {
@@ -203,7 +203,7 @@
       define('TRANSCRIPT', $transcript);
     } elseif (!empty(SET['LOCALE'])) {
       $request = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '';
-      $default = str_replace('+', '-', SET['LOCALE']);
+      $default = strtr(SET['LOCALE'], '+', '-');
       $uri = implode('/', URI);
 
       preg_match_all("/[a-z]{2}-[a-z]{2}/i", $request, $matches);
