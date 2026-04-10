@@ -465,7 +465,7 @@ Arcane provides global constants to give you instant access to the application s
   - `PATH`: The resolved “base path” for the matched page.
   - `PATHS`: Hierarchical path list used for helper/asset discovery.
   - `PAGEFILE`: Absolute path to the resolved PHP page file.
-  - `VIEWFILE`: Absolute path to the uncompiled HTML view file (when used).
+  - `VIEWFILE`: Absolute path to the resolved HTML view file (when used).
   - `LAYOUTFILE`: Absolute path to the resolved PHP layout file (when used).
 
 11.3 **Localization**:
