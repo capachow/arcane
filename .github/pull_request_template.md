@@ -1,7 +1,3 @@
-Please ensure this Pull Request is targeting the `develop` branch, not `master`.
-
----
-
 **What does this PR do?**
 A brief description of the changes, bug fixes, or new features.
 

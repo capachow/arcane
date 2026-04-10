@@ -1,15 +1,14 @@
 name: Auto Release
 
 on:
-  pull_request:
+  push:
     branches:
       - master
-    types:
-      - closed
+    paths:
+      - 'index.php'
 
 jobs:
   release:
-    if: github.event.pull_request.merged == true && github.event.pull_request.head.ref == 'develop'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -35,5 +34,4 @@ jobs:
           gh release create ${{ steps.get_version.outputs.tag }} \
             --title "${{ steps.get_version.outputs.version }}" \
             --generate-notes \
-            --target ${{ github.event.pull_request.base.ref }} \
             index.php
