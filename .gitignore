@@ -1,6 +1,8 @@
 *
+!.github/
+!.github/**
 !.gitignore
-!composer.json
 !LICENSE.md
 !README.md
+!composer.json
 !index.php
