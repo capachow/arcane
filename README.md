@@ -89,7 +89,7 @@ Arcane keeps things minimal. You can build simple to complex applications using 
   -  A. **Current Request** [empty]:
 
 ``` php
-<?= path(); # /blog/2024/ ?>
+<?= path(); # /blog/2024 ?>
 ```
 
   - B. **Get Segment** [integer]:
@@ -100,13 +100,13 @@ Arcane keeps things minimal. You can build simple to complex applications using 
 ```
 
   - C. **Generate URL** [string|array]:
-
-    - *Note*: If a locale is active (example: `en+us`), Arcane automatically prefixes the generated URL (`/us/about/`). You do not have to manually manage language prefixes.
-    - *Normalization*: If you provide a path without an extension or parameters (no `.` or `?`), Arcane assumes it is a page route and adds a trailing slash to normalize SEO.
+- *Note*: If a locale is active (example: `en+us`), Arcane automatically prefixes the generated URL (`/us/about`). You do not have to manually manage language prefixes.
+- *Normalization*: If you provide a path without an extension or parameters (no `.` or `?`), Arcane assumes it is a page route and removes any trailing slash to normalize SEO.
 
 ``` php
-<?= path('/about'); # normalized to /about/ ?>
-<?= path('/shop/cart/'); # /us/shop/cart/ (if active locale) ?>
+<?= path('/about/'); # normalized to /about ?>
+<?= path('/shop/cart'); # /us/shop/cart (if active locale) ?>
+```
 <?= path(['IMAGES', 'logo.svg']); # /images/logo.svg (no matter the URL) ?>
 ```
 
@@ -152,12 +152,12 @@ Returns a translated string based on the active locale. If no translation exists
 
 In Arcane, a file *is* a URL. This eliminates the need for a `routes.php` file.
 
-  - `pages/about.php` → `/about/`
-  - `pages/blog/index.php` → `/blog/`
-  - `pages/shop/checkout.php` → `/shop/checkout/`
+  - `pages/about.php` → `/about`
+  - `pages/blog/index.php` → `/blog`
+  - `pages/shop/checkout.php` → `/shop/checkout`
 
-What if you need dynamic segments, like `/blog/my-post/`? Arcane resolves the *closest* physical file first.
-If you visit `/blog/my-post/`, Arcane loads `pages/blog.php` (if it exists) and passes `my-post` as a parameter.
+What if you need dynamic segments, like `/blog/my-post`? Arcane resolves the *closest* physical file first.
+If you visit `/blog/my-post`, Arcane loads `pages/blog.php` (if it exists) and passes `my-post` as a parameter.
 
 You control valid dynamic segments using `define('ROUTES', array)` inside the page file.
 
@@ -165,9 +165,9 @@ You control valid dynamic segments using `define('ROUTES', array)` inside the pa
 
 ```php
 <?php define('ROUTES', [
-  ['history'], # /blog/history/
-  [['2023', '2024']], # /blog/2023/ or /blog/2024/
-  ['*'] # /blog/anything/
+  ['history'], # /blog/history
+  [['2023', '2024']], # /blog/2023 or /blog/2024
+  ['*'] # /blog/anything
 ]);
 
 $slug = path(1); ?>
@@ -306,7 +306,7 @@ This is one of Arcane's most "refreshing" features. Instead of autoloading every
 
 **Context-aware Cascade**:
 
-If you are visiting `/shop/checkout/`, Arcane looks for helpers in this specific order, merging them as it goes:
+If you are visiting `/shop/checkout`, Arcane looks for helpers in this specific order, merging them as it goes:
 
   1. `helpers/*.php` (global scoped helpers)
   2. `helpers/shop/*.php` (section scoped helpers)
@@ -393,8 +393,8 @@ Arcane handles localization via folder naming conventions, supporting both langu
 
 **Folder Naming (`-` vs `+`)**:
 
-  - `locales/en/en-us.json` creates a **two-segment URL** (`/en/us/`).
-  - `locales/en/en+us.json` creates a **one-segment URL** (`/en/`). Country is active, but hidden from the URL.
+  - `locales/en/en-us.json` creates a **two-segment URL** (`/en/us`).
+  - `locales/en/en+us.json` creates a **one-segment URL** (`/en`). Country is active, but hidden from the URL.
 
 Arcane weaves translations intelligently. For `en-us`, it loads:
 
@@ -443,7 +443,7 @@ DIR_IMAGES=/images/
 Directives are constants defined at the top of a *page* file. They act as the "controller" logic for that specific page.
 
   - `define('LAYOUT', 'filename')`: Overrides the global layout for this specific page.
-  - `define('REDIRECT', '/path/')`: Immediately redirects the user. Relative paths are auto-resolved; absolute URLs are respected.
+  - `define('REDIRECT', '/path')`: Immediately redirects the user. Relative paths are auto-resolved; absolute URLs are respected.
   - `define('ROUTES', array)`: Defines acceptable "extra" URL segments for this page (see [Routing & Pages](#3-routing--pages)).
 
 ---
@@ -484,7 +484,7 @@ Arcane provides global constants to give you instant access to the application s
 
 ### 12. Troubleshooting & Notes
 
-  - **Trailing Slashes**: Arcane normalizes "page-like" routes to have trailing slashes. This prevents duplicate content issues for SEO.
+  - **Trailing Slashes**: Arcane normalizes "page-like" routes to not have trailing slashes. This prevents duplicate content issues for SEO.
   - **Minification**: By default, `SET_MINIFY` is `true`. It strips whitespace and comments. If your HTML looks broken, try setting this to `false` in `.env` to debug.
   - **Helper Collisions**: If you have helpers with the same name in different folders, remember: *Scope wins*. The helper closest to the current page path overrides the global one.
   - **Errors**: To see full PHP error details during development, ensure `SET_ERRORS` is set to `true` in your environment.
